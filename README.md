@@ -92,3 +92,15 @@ The API listens on port `8080` by default. Check database connectivity at `http:
 ```powershell
 .\mvnw.cmd test
 ```
+
+## Deploy to Render with Docker
+
+The backend runs on Java 17. Render's native runtimes do not include Java, so deploy it as a Docker Web Service.
+
+1. Keep `Dockerfile` at the repository root and create a Render **Web Service** using the **Docker** runtime.
+2. Set the Dockerfile path to `./Dockerfile` and the Docker build context to `.`. Leave the root directory blank when the backend repository itself is connected.
+3. Set the health check path to `/api/health`.
+4. Add `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, and optionally `DB_DRIVER` as Render environment variables. Do not commit or import a local `.env` file into the Docker image.
+5. Deploy and verify `https://<render-service-host>/api/health` reports the database as connected.
+
+The container uses Render's `PORT` environment variable when provided and defaults to port `8080` for local container runs. The Docker build skips test execution; run `.\mvnw.cmd test` separately before deployment.
